@@ -25,7 +25,7 @@
     "prettier:write": "npm run _prettier -- --write",
     "prettier": "npm run prettier:write",
     "prettier:check": "npm run _prettier -- --check",
-    "clean": "rimraf ./dist ./dev-ops ./type-check",
+    "clean": "rimraf ./dist ./cli",
     "tsc": "tsc -p tsconfig.publish.json && tsc-alias -p tsconfig.publish.json",
     "generate": "tsx --tsconfig ./tsconfig.zx.json ./tools/generate-alias.zx.ts",
     "ci:update-version": "tsx --tsconfig ./tsconfig.zx.json ./tools/update-version.zx.ts",
