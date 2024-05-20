@@ -13,7 +13,8 @@ inline: true
 
 [generate][md_hub:generate-command]
 
-
 <!-- MD_HUB: BEGIN_DEFINE_LINKS: -->
+
 [md_hub:generate-command]: ./src/cli/commands/generate/README.md 'GENERATE COMMAND'
+
 <!-- MD_HUB: END_DEFINE_LINKS: -->
