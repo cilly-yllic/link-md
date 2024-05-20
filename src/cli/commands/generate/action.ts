@@ -6,17 +6,17 @@ import { Detail, PathDepthClassify, PathInfo } from '~types/md.js'
 import { BundleOptions } from '~types/options.js'
 import { Settings } from '~types/settings.js'
 import { getAllFiles } from '~utils/fs.js'
-import {getParam, getTitle, replace } from '~utils/md.js'
+import { getParam, getTitle, replace } from '~utils/md.js'
 import { getProjectRootPath } from '~utils/path.js'
-import {getDir, getDepthType, DEPTH_TYPES} from '~utils/path.js'
-
+import { getDir, getDepthType, DEPTH_TYPES } from '~utils/path.js'
 
 const replacePath = (str: string) => str.replace(/\/{2,}/, '/')
 const splitComma = (str: string | undefined, alternative: string[]) => (str ? str.split(',') : null) || alternative
 
 const mergeConfig = ({ options, settings }: ActionArg<BundleOptions>): Settings => {
   return {
-    'skip-hidden': typeof options.skipHidden === 'undefined' ? settings['skip-hidden'] : JSON.parse(`${options.skipHidden}`),
+    'skip-hidden':
+      typeof options.skipHidden === 'undefined' ? settings['skip-hidden'] : JSON.parse(`${options.skipHidden}`),
     exclude: splitComma(options.exclude, settings.exclude),
     include: splitComma(options.include, settings.include),
     filenames: splitComma(options.filenames, settings.filenames),
@@ -25,7 +25,7 @@ const mergeConfig = ({ options, settings }: ActionArg<BundleOptions>): Settings 
 }
 
 const classify = (dataList: PathInfo[]) => {
-  return dataList.reduce((mds: Detail[], data ) => {
+  return dataList.reduce((mds: Detail[], data) => {
     const classifyList: PathDepthClassify = { children: [], grandchildren: [], parallels: [] }
     for (const { dir, path } of dataList) {
       if (data.path === path) {
@@ -34,18 +34,18 @@ const classify = (dataList: PathInfo[]) => {
       switch (getDepthType(dir, data.dir)) {
         case DEPTH_TYPES.parallel:
           classifyList.parallels.push(path)
-          break;
+          break
         case DEPTH_TYPES.child:
           classifyList.children.push(path)
-          break;
+          break
         case DEPTH_TYPES.grandchild:
           classifyList.grandchildren.push(path)
-          break;
+          break
       }
     }
     mds.push({
       ...data,
-      ...classifyList
+      ...classifyList,
     })
     return mds
   }, [])
@@ -67,7 +67,7 @@ const getPathDetails = (paths: string[], config: Settings) => {
       path,
       dir,
       output,
-      outputPath: join(dir, output)
+      outputPath: join(dir, output),
     })
   }
   return classify(list)
@@ -77,16 +77,17 @@ export const action = async (args: ActionArg<BundleOptions>) => {
   const rootPath = getProjectRootPath()
   const config = mergeConfig(args)
   const skipHidden = config['skip-hidden'] ? ['**/.*/**/*', '**/.*'] : []
-  
+
   const exclude = [
     '**/node_modules/.*/*',
     '**/node_modules/**/*',
     ...skipHidden,
-    ...config.exclude.map((path) => replacePath(`${rootPath}/${path}`))
+    ...config.exclude.map(path => replacePath(`${rootPath}/${path}`)),
   ]
-  const include = config.include.map((path) => replacePath(`${rootPath}/${path}`))
-  const paths = getAllFiles(rootPath, [], { include, exclude })
-    .filter((path) => config.filenames.some((filename) => path.endsWith(`/${filename}`)))
+  const include = config.include.map(path => replacePath(`${rootPath}/${path}`))
+  const paths = getAllFiles(rootPath, [], { include, exclude }).filter(path =>
+    config.filenames.some(filename => path.endsWith(`/${filename}`))
+  )
   const pathDetails = getPathDetails(paths, config)
   for (const pathDetail of pathDetails) {
     if (pathDetail.lock) {

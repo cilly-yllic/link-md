@@ -4,7 +4,6 @@ import { getAliases, writePackageJson } from 'my-gadgetry/dev-ops/package-genera
 
 import { name } from 'package.json'
 
-
 const AUTHOR_NAME = `@cilly`
 const PACKAGE_NAME = name
 const ROOT_PATH = resolve()

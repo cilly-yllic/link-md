@@ -8,7 +8,6 @@ export const PROPERTIES = {
   BEFORE_GENERATE_LINK: 'BEFORE_GENERATE_LINK',
 }
 
-
 export interface PathInfo {
   id: string
   lock: boolean
@@ -52,7 +51,9 @@ export const LINK_MD_COMMENT_PREFIX = 'LINK_MD'
 export const COMMENT_REG_EXP = new RegExp(`${BEGIN_COMMENT}\\s*.*?${END_COMMENT}`, 'gs')
 export const BRAKE_LINE_REG_EXP = new RegExp(/\r?\n/, 'g')
 export const LINK_REG_EXP = new RegExp('^\\s*.*\\[(.+)][(|\\[](.+)[)|\\]].*')
-export const LINK_MD_COMMENT_PREFIX_REG_EXP = new RegExp(`${BEGIN_COMMENT}\\s*${LINK_MD_COMMENT_PREFIX}${PARAM_SEPARATOR}\\s*`)
+export const LINK_MD_COMMENT_PREFIX_REG_EXP = new RegExp(
+  `${BEGIN_COMMENT}\\s*${LINK_MD_COMMENT_PREFIX}${PARAM_SEPARATOR}\\s*`
+)
 // export const LINK_MD_PARAMS_REG_EXP = new RegExp(`^\\w+${PARAM_SEPARATOR}(.*?)${END_COMMENT}.*`, 's')
 export const LINK_MD_PARAMS_REG_EXP = new RegExp(`^[^${PARAM_SEPARATOR}]+${PARAM_SEPARATOR}(.*?)${END_COMMENT}.*`, 's')
 // export const LINK_MD_CONTENT_REG_EXP = new RegExp(`^\\w+${PARAM_SEPARATOR}.*${END_COMMENT}(.*)`, 's')

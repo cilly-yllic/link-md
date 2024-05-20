@@ -1,11 +1,9 @@
 import { Command as Program } from 'commander'
 
-
 import { BundleOptions } from '~types/options.js'
 import { CommandClass } from '~utils/command.js'
 
 import { action } from './action.js'
-
 
 const setAliases = (commandClass: CommandClass<BundleOptions>) => {
   commandClass

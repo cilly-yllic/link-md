@@ -31,7 +31,7 @@ export const DEPTH_TYPES = {
   grandchild: 'grandchild',
   different: 'different',
 }
-export type DepthType = typeof DEPTH_TYPES[keyof typeof DEPTH_TYPES]
+export type DepthType = (typeof DEPTH_TYPES)[keyof typeof DEPTH_TYPES]
 /**
  * A: /hoge, B: /hoge/foo/piyo -> ancestor
  * A: /hoge/foo, B: /hoge/foo/piyo -> parent

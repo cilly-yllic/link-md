@@ -7,7 +7,9 @@
 - lnmd generate
 
 ## Set Config in md File
+
 ### ROOT FILE
+
 ```markdown
 <!-- LINK_MD: CONFIG:
 skip-hidden: true # optional: default true (ex: ignore .git, .idea, etc)
@@ -16,24 +18,30 @@ exclude: dist/**/* # optional: default empty (only node_modules)
 filenames: README.md,CHANGE_LOG.md # optional: default README.md
 output: README_MAIN.md # optional: README.md
 -->
-
 ```
 
 ### OTHERS
+
 #### child file setting
-*set file id and link name*
+
+_set file id and link name_
+
 ```markdown
 <!-- LINK_MD: ID: hoge -->
 <!-- LINK_MD: LOCK: true --> # not generate when it true, default false
 <!-- LINK_MD: TITLE: GENERATE COMMAND -->
 ```
+
 or
+
 ```markdown
 <!-- LINK_MD: ID: hoge -->
+
 # GENERATE COMMAND
 ```
 
-*set specific target md position*
+_set specific target md position_
+
 ```markdown
 <!-- LINK_MD: LINK_NEXT_LINE:
 id: hoge # required
@@ -41,7 +49,8 @@ inline: false  # optional: default false
 -->
 ```
 
-*all / children / grandChild / parallel depth link list*
+_all / children / grandChild / parallel depth link list_
+
 ```markdown
 <!-- LINK_MD: BEGIN_LINKS:
 all: true # optional: default false
@@ -55,6 +64,7 @@ parallel: true # optional: default false
 ```
 
 ## Command Options
+
 ```js
   .option('-sh --skip-hidden <boolean>', 'skip read hidden dir, default: true')
   .option('-incl, --include <strings>', 'include dirs, default: [] (all files)')

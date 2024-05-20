@@ -1,12 +1,10 @@
 #!/usr/bin/env node
 import { program } from 'commander'
 
-
 import { error } from '~utils/log.js'
 import { get, ENVS, init } from '~utils/process.js'
 
 import { init as initCommands } from './commands/index.js'
-
 
 init()
 program.version(`${get(ENVS.PACKAGE_VERSION)}`)

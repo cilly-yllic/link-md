@@ -1,18 +1,17 @@
-import chalk from 'chalk';
-
+import chalk from 'chalk'
 
 export const success = (...args: any[]) => {
-  console.log(chalk.green(...args));
+  console.log(chalk.green(...args))
 }
 
 export const warn = (...args: any[]) => {
-  console.log(chalk.hex('#FFA500')(...args));
+  console.log(chalk.hex('#FFA500')(...args))
 }
 
 export const info = (...args: any[]) => {
-  console.log(chalk.blue(...args));
+  console.log(chalk.blue(...args))
 }
 
 export const error = (...args: any[]) => {
-  console.log(chalk.red(...args));
+  console.log(chalk.red(...args))
 }

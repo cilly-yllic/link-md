@@ -4,13 +4,14 @@ const config: Config = {
   preset: 'ts-jest',
   verbose: true,
   silent: false,
-  roots: ['<rootDir>/__tests__', '<rootDir>/src'],
+  roots: ['<rootDir>/src'],
   testMatch: ['**/__tests__/**/*.spec.+(ts|tsx|js)', '**/?(*.)+(spec|test).+(ts|tsx|js)'],
   globals: {
     config: './tsconfig.spec.json',
   },
   testEnvironment: 'node',
-  transformIgnorePatterns: ['/dev-utils/*.js'],
+  transformIgnorePatterns: [],
+  passWithNoTests: true,
   moduleNameMapper: {
     '^(\\.{1,2}/.*)\\.js$': '$1',
     '~internal/(.*)\\.js': '<rootDir>/src/_internal/$1',

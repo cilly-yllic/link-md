@@ -3,7 +3,6 @@ import { readFileSync } from 'fs'
 import { Settings } from '~types/settings.js'
 import { getParam } from '~utils/md.js'
 
-
 import { SETTING_FILE_NAME } from './configs.js'
 import { getProjectRootPath } from './path.js'
 
@@ -16,7 +15,7 @@ export const DEFAULT_SETTINGS: Settings = Object.freeze({
   exclude: [],
   include: [],
   filenames: [DEFAULT_MD_FILE_NAME],
-  output: DEFAULT_MD_FILE_NAME
+  output: DEFAULT_MD_FILE_NAME,
 })
 
 export const parse = (txt: string): Settings => {
@@ -48,5 +47,5 @@ export const parse = (txt: string): Settings => {
 
 export const getSettings = (inputFilename: string) => {
   const readme = readFileSync(`${getProjectRootPath()}/${inputFilename || SETTING_FILE_NAME}`, 'utf-8')
-  return parse(getParam(readme,'CONFIG'))
+  return parse(getParam(readme, 'CONFIG'))
 }

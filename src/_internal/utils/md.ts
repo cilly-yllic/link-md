@@ -14,7 +14,9 @@ import {
   LINK_MD_PROPERTY_REG_EXP,
   LINK_MD_PARAMS_REG_EXP,
   BRAKE_LINE_REG_EXP,
-  LINK_MD_CONTENT_REG_EXP, BEGIN_COMMENT, END_COMMENT,
+  LINK_MD_CONTENT_REG_EXP,
+  BEGIN_COMMENT,
+  END_COMMENT,
 } from '~types/md.js'
 
 import { getRelative } from './path.js'
@@ -35,14 +37,14 @@ export const getParams = (text: string, key: string) => {
   if (!reg.test(text)) {
     return ''
   }
-  
-  return (text.match(reg) as RegExpMatchArray)
+
+  return text.match(reg) as RegExpMatchArray
 }
 
 const getRemovedCommentOut = (text: string) => text.replace(COMMENT_REG_EXP, '')
 
 const getFirstLine = (text: string) => {
-  const lines = text.split('\n').filter((line) => line.trim().length)
+  const lines = text.split('\n').filter(line => line.trim().length)
   return lines.length ? lines[0].trim() : ''
 }
 
@@ -52,20 +54,19 @@ export const getTitle = (text: string) => {
     return title
   }
   const md = getRemovedCommentOut(text)
-  return getParam(text, 'TITLE')
-    || md.replace(/\r?\n?#+(.*?)\r?\n.*/s, '$1').trim()
-    || getFirstLine(md)
+  return getParam(text, 'TITLE') || md.replace(/\r?\n?#+(.*?)\r?\n.*/s, '$1').trim() || getFirstLine(md)
 }
 
 type DefineLinkName = `${typeof LINK_NAME_PREFIX}${string}`
 const getLinkName = (id: string): DefineLinkName => `${LINK_NAME_PREFIX}${id}`
 const getLink = (id: string, title: string) => `[${title}][${getLinkName(id)}]`
-const getLinksByDetails = (details: Detail[]): string[] => details.map((d) => getLink(d.id, d.title))
+const getLinksByDetails = (details: Detail[]): string[] => details.map(d => getLink(d.id, d.title))
 
 type DefineLinkKey = `[${DefineLinkName}]${typeof PARAM_SEPARATOR}`
 type DefineLinkBase = `${DefineLinkKey} ${string}`
 type DefineLink = DefineLinkBase | `${DefineLinkBase} '${string}'`
-const getDefineLink = (id: string, url: string, title: string): DefineLink => `[${getLinkName(id)}]: ${url}${ title ? ` '${title}'` : ''}`
+const getDefineLink = (id: string, url: string, title: string): DefineLink =>
+  `[${getLinkName(id)}]: ${url}${title ? ` '${title}'` : ''}`
 
 const replaceToLink = (txt: string, inline: boolean, detail: Detail) => {
   if (LINK_REG_EXP.test(txt)) {
@@ -90,7 +91,7 @@ ${txt}
 }
 
 const getLinkContent = (path: string, content: string, { id, inline }: LinkNextLineProperties, details: Detail[]) => {
-  const data = details.find((d) => d.path !== path && d.id === id)
+  const data = details.find(d => d.path !== path && d.id === id)
   if (!data) {
     return content
   }
@@ -115,21 +116,23 @@ interface SectionParams {
 
 const getSectionParams = (section: string): SectionParams => {
   const params = section.replace(LINK_MD_PARAMS_REG_EXP, '$1')
-  const splits = params.split(BRAKE_LINE_REG_EXP).filter((p) => p.trim().length) as `${string}${typeof PARAM_SEPARATOR}${string}`[]
+  const splits = params
+    .split(BRAKE_LINE_REG_EXP)
+    .filter(p => p.trim().length) as `${string}${typeof PARAM_SEPARATOR}${string}`[]
   return {
     params: splits.reduce((acc: Record<string, any>, keyValueText) => {
-      const keyValue = keyValueText.split(PARAM_SEPARATOR).map((k) => k.trim())
+      const keyValue = keyValueText.split(PARAM_SEPARATOR).map(k => k.trim())
       if (keyValue.length !== 2) {
         return acc
       }
       acc[keyValue[0]] = isBoolean(keyValue[1]) ? JSON.parse(keyValue[1]) : keyValue[1]
       return acc
     }, {}),
-    content: section.replace(LINK_MD_CONTENT_REG_EXP, '$1')
+    content: section.replace(LINK_MD_CONTENT_REG_EXP, '$1'),
   }
 }
 
-const getRelateDetails = (details: Detail[], list: string[]) => details.filter((d) => list.includes(d.path))
+const getRelateDetails = (details: Detail[], list: string[]) => details.filter(d => list.includes(d.path))
 
 const push = (list: any[], stack: any[] = []) => {
   for (const data of list) {
@@ -139,7 +142,7 @@ const push = (list: any[], stack: any[] = []) => {
 
 const getLinksByProperties = (detail: Detail, properties: EndLinksProperties, details: Detail[]) => {
   if (properties.all) {
-    return details.filter((d) => d.path !== detail.path)
+    return details.filter(d => d.path !== detail.path)
   }
   const links: Detail[] = []
   if (properties.parallel) {
@@ -157,7 +160,7 @@ const getLinksByProperties = (detail: Detail, properties: EndLinksProperties, de
 const getLinksContent = (properties: EndLinksProperties, linksDetails: Detail[], lineLinkDetails: Detail[]) => {
   let list: Detail[] = linksDetails
   if (!properties.linked) {
-    list = linksDetails.filter((d) => lineLinkDetails.every((lineLinkDetail) => lineLinkDetail.path !== d.path))
+    list = linksDetails.filter(d => lineLinkDetails.every(lineLinkDetail => lineLinkDetail.path !== d.path))
   }
   return `\n${getLinksByDetails(list).join('\n')}\n`
 }
@@ -166,7 +169,9 @@ const rebaseCommentSection = (property: string, params: Record<string, any>) => 
   if (!Object.keys(params).length) {
     return `${property}: ${END_COMMENT}`
   }
-  return `${property}:\n${Object.entries(params).map(([key, value]) => `${key}: ${value}`).join('\n')}\n${END_COMMENT}`
+  return `${property}:\n${Object.entries(params)
+    .map(([key, value]) => `${key}: ${value}`)
+    .join('\n')}\n${END_COMMENT}`
 }
 
 const getSectionByContent = (property: string, params: Record<string, any>, content: string) => {
@@ -184,7 +189,7 @@ const getValidate = (detail: Detail, sections: string[], details: Detail[]) => {
     switch (property) {
       case PROPERTIES.LINK_NEXT_LINE: {
         const { params } = getSectionParams(section)
-        const data = details.find((d) => d.path !== detail.path && d.id === params.id)
+        const data = details.find(d => d.path !== detail.path && d.id === params.id)
         if (data) {
           lineLinksDetails.push(data)
         }
@@ -218,7 +223,7 @@ interface DefineMap {
 }
 
 const setDefineLinks = (currentDir: string, details: Detail[], defineMap: DefineMap = {}) => {
-  for (const { id, title, outputPath} of details) {
+  for (const { id, title, outputPath } of details) {
     let url = getRelative(currentDir, outputPath)
     if (!/^\.*\//.test(url)) {
       url = `./${url}`
@@ -227,7 +232,12 @@ const setDefineLinks = (currentDir: string, details: Detail[], defineMap: Define
   }
 }
 
-const getDefineLinksContent = (dir: string, linksDetails: Detail[], lineLinkDetails: Detail[], hasEndDefineLinksSection: boolean) => {
+const getDefineLinksContent = (
+  dir: string,
+  linksDetails: Detail[],
+  lineLinkDetails: Detail[],
+  hasEndDefineLinksSection: boolean
+) => {
   const defineMap: DefineMap = {}
   setDefineLinks(dir, linksDetails, defineMap)
   setDefineLinks(dir, lineLinkDetails, defineMap)
@@ -243,7 +253,8 @@ export const replace = (detail: Detail, details: Detail[]) => {
   const _sections = md.split(LINK_MD_COMMENT_PREFIX_REG_EXP)
   const sections: string[] = []
   let i = -1
-  const { hasEndLinksSection, hasBeginDefineLinksSection, hasEndDefineLinksSection, linksDetails, lineLinksDetails} = getValidate(detail, _sections, details)
+  const { hasEndLinksSection, hasBeginDefineLinksSection, hasEndDefineLinksSection, linksDetails, lineLinksDetails } =
+    getValidate(detail, _sections, details)
   for (const _section of _sections) {
     ++i
     if (i === 0) {
@@ -254,28 +265,38 @@ export const replace = (detail: Detail, details: Detail[]) => {
     const { params, content: _content } = getSectionParams(_section)
     let content = _content
     let section = _section
-    switch(property) {
+    switch (property) {
       case PROPERTIES.LINK_NEXT_LINE:
         content = getLinkContent(detail.path, _content, params as LinkNextLineProperties, details)
         section = getSectionByContent(property, params, content)
-      break
+        break
       case PROPERTIES.BEGIN_LINKS:
         content = getLinksContent(params as EndLinksProperties, linksDetails, lineLinksDetails)
         section = getSectionByContent(property, params, content)
         if (!hasEndLinksSection) {
           section += `\n${BEGIN_COMMENT} ${LINK_MD_COMMENT_PREFIX}${PARAM_SEPARATOR} ${PROPERTIES.END_LINKS}${PARAM_SEPARATOR} ${END_COMMENT}`
         }
-        break;
+        break
       case PROPERTIES.BEGIN_DEFINE_LINKS:
-        section = getSectionByContent(property, params, getDefineLinksContent(detail.dir, linksDetails, lineLinksDetails, hasEndDefineLinksSection))
-        break;
+        section = getSectionByContent(
+          property,
+          params,
+          getDefineLinksContent(detail.dir, linksDetails, lineLinksDetails, hasEndDefineLinksSection)
+        )
+        break
       default:
         break
     }
     sections.push(section)
   }
   if (!hasBeginDefineLinksSection) {
-    sections.push(getSectionByContent(PROPERTIES.BEGIN_DEFINE_LINKS, {}, getDefineLinksContent(detail.dir, linksDetails, lineLinksDetails, hasEndDefineLinksSection)))
+    sections.push(
+      getSectionByContent(
+        PROPERTIES.BEGIN_DEFINE_LINKS,
+        {},
+        getDefineLinksContent(detail.dir, linksDetails, lineLinksDetails, hasEndDefineLinksSection)
+      )
+    )
   }
   return sections.join(`${BEGIN_COMMENT} ${LINK_MD_COMMENT_PREFIX}${PARAM_SEPARATOR} `)
 }
