@@ -4,7 +4,8 @@
 # GENERATE COMMAND
 
 - md-hopper generate
-- lnmd generate
+- mdhopper generate
+- mdhop generate
 
 ## Set Config in md File
 
