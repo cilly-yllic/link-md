@@ -1,21 +1,20 @@
 {
-  "name": "link-md",
-  "version": "1.0.0",
+  "name": "md-hub",
+  "version": "1.0.0-alpha",
   "description": "",
   "type": "module",
-  "main": "index.js",
   "bin": {
-    "link-md": "./dist/cli/index.js",
+    "md-hub": "./dist/cli/index.js",
     "lnmd": "./dist/cli/index.js"
   },
   "repository": {
     "type": "git",
-    "url": "git+https://github.com/cilly-yllic/link-md.git"
+    "url": "git+https://github.com/cilly-yllic/md-hub.git"
   },
   "bugs": {
-    "url": "https://github.com/cilly-yllic/link-md/issues"
+    "url": "https://github.com/cilly-yllic/md-hub/issues"
   },
-  "homepage": "https://github.com/cilly-yllic/link-md#readme",
+  "homepage": "https://github.com/cilly-yllic/md-hub#readme",
   "scripts": {
     "prepare": "husky",
     "jest": "jest",

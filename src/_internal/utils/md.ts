@@ -9,12 +9,12 @@ import {
   COMMENT_REG_EXP,
   PARAM_SEPARATOR,
   LINK_REG_EXP,
-  LINK_MD_COMMENT_PREFIX,
-  LINK_MD_COMMENT_PREFIX_REG_EXP,
-  LINK_MD_PROPERTY_REG_EXP,
-  LINK_MD_PARAMS_REG_EXP,
+  MD_HUB_COMMENT_PREFIX,
+  MD_HUB_COMMENT_PREFIX_REG_EXP,
+  MD_HUB_PROPERTY_REG_EXP,
+  MD_HUB_PARAMS_REG_EXP,
   BRAKE_LINE_REG_EXP,
-  LINK_MD_CONTENT_REG_EXP,
+  MD_HUB_CONTENT_REG_EXP,
   BEGIN_COMMENT,
   END_COMMENT,
 } from '~types/md.js'
@@ -23,7 +23,7 @@ import { getRelative } from './path.js'
 import { isBoolean } from './type-check.js'
 
 export const getParam = (text: string, key: string) => {
-  const PREFIX = `${BEGIN_COMMENT}\\s*${LINK_MD_COMMENT_PREFIX}:\\s*${key}:`
+  const PREFIX = `${BEGIN_COMMENT}\\s*${MD_HUB_COMMENT_PREFIX}:\\s*${key}:`
   const reg = new RegExp(`${PREFIX}(.*?)${END_COMMENT}`, 's')
   if (!reg.test(text)) {
     return ''
@@ -32,7 +32,7 @@ export const getParam = (text: string, key: string) => {
 }
 
 export const getParams = (text: string, key: string) => {
-  const PREFIX = `${BEGIN_COMMENT}\\s*${LINK_MD_COMMENT_PREFIX}:\\s*${key}:`
+  const PREFIX = `${BEGIN_COMMENT}\\s*${MD_HUB_COMMENT_PREFIX}:\\s*${key}:`
   const reg = new RegExp(`${PREFIX}(.*?)${END_COMMENT}`, 'gs')
   if (!reg.test(text)) {
     return ''
@@ -76,7 +76,7 @@ const replaceToLink = (txt: string, inline: boolean, detail: Detail) => {
     }
     // TODO keep list block
     return `[${txt.replace(LINK_REG_EXP, '$1')}][${getLinkName(detail.id)}]
-<!-- ${LINK_MD_COMMENT_PREFIX}${PARAM_SEPARATOR} ${PROPERTIES.BEFORE_GENERATE_LINK}${PARAM_SEPARATOR} -->
+<!-- ${MD_HUB_COMMENT_PREFIX}${PARAM_SEPARATOR} ${PROPERTIES.BEFORE_GENERATE_LINK}${PARAM_SEPARATOR} -->
 <!-- ${txt} -->
 `
   }
@@ -115,7 +115,7 @@ interface SectionParams {
 }
 
 const getSectionParams = (section: string): SectionParams => {
-  const params = section.replace(LINK_MD_PARAMS_REG_EXP, '$1')
+  const params = section.replace(MD_HUB_PARAMS_REG_EXP, '$1')
   const splits = params
     .split(BRAKE_LINE_REG_EXP)
     .filter(p => p.trim().length) as `${string}${typeof PARAM_SEPARATOR}${string}`[]
@@ -128,7 +128,7 @@ const getSectionParams = (section: string): SectionParams => {
       acc[keyValue[0]] = isBoolean(keyValue[1]) ? JSON.parse(keyValue[1]) : keyValue[1]
       return acc
     }, {}),
-    content: section.replace(LINK_MD_CONTENT_REG_EXP, '$1'),
+    content: section.replace(MD_HUB_CONTENT_REG_EXP, '$1'),
   }
 }
 
@@ -185,7 +185,7 @@ const getValidate = (detail: Detail, sections: string[], details: Detail[]) => {
   let linksDetails: Detail[] = []
   const lineLinksDetails: Detail[] = []
   for (const section of sections) {
-    const property = section.replace(LINK_MD_PROPERTY_REG_EXP, '$1')
+    const property = section.replace(MD_HUB_PROPERTY_REG_EXP, '$1')
     switch (property) {
       case PROPERTIES.LINK_NEXT_LINE: {
         const { params } = getSectionParams(section)
@@ -243,14 +243,14 @@ const getDefineLinksContent = (
   setDefineLinks(dir, lineLinkDetails, defineMap)
   let content = `\n${Object.values(defineMap).join('\n')}\n`
   if (!hasEndDefineLinksSection) {
-    content += `${BEGIN_COMMENT} ${LINK_MD_COMMENT_PREFIX}${PARAM_SEPARATOR} ${PROPERTIES.END_DEFINE_LINKS}${PARAM_SEPARATOR} ${END_COMMENT}\n`
+    content += `${BEGIN_COMMENT} ${MD_HUB_COMMENT_PREFIX}${PARAM_SEPARATOR} ${PROPERTIES.END_DEFINE_LINKS}${PARAM_SEPARATOR} ${END_COMMENT}\n`
   }
   return content
 }
 
 export const replace = (detail: Detail, details: Detail[]) => {
   const md = readFileSync(detail.path, 'utf-8')
-  const _sections = md.split(LINK_MD_COMMENT_PREFIX_REG_EXP)
+  const _sections = md.split(MD_HUB_COMMENT_PREFIX_REG_EXP)
   const sections: string[] = []
   let i = -1
   const { hasEndLinksSection, hasBeginDefineLinksSection, hasEndDefineLinksSection, linksDetails, lineLinksDetails } =
@@ -261,7 +261,7 @@ export const replace = (detail: Detail, details: Detail[]) => {
       sections.push(_section)
       continue
     }
-    const property = _section.replace(LINK_MD_PROPERTY_REG_EXP, '$1')
+    const property = _section.replace(MD_HUB_PROPERTY_REG_EXP, '$1')
     const { params, content: _content } = getSectionParams(_section)
     let content = _content
     let section = _section
@@ -274,7 +274,7 @@ export const replace = (detail: Detail, details: Detail[]) => {
         content = getLinksContent(params as EndLinksProperties, linksDetails, lineLinksDetails)
         section = getSectionByContent(property, params, content)
         if (!hasEndLinksSection) {
-          section += `\n${BEGIN_COMMENT} ${LINK_MD_COMMENT_PREFIX}${PARAM_SEPARATOR} ${PROPERTIES.END_LINKS}${PARAM_SEPARATOR} ${END_COMMENT}`
+          section += `\n${BEGIN_COMMENT} ${MD_HUB_COMMENT_PREFIX}${PARAM_SEPARATOR} ${PROPERTIES.END_LINKS}${PARAM_SEPARATOR} ${END_COMMENT}`
         }
         break
       case PROPERTIES.BEGIN_DEFINE_LINKS:
@@ -298,5 +298,5 @@ export const replace = (detail: Detail, details: Detail[]) => {
       )
     )
   }
-  return sections.join(`${BEGIN_COMMENT} ${LINK_MD_COMMENT_PREFIX}${PARAM_SEPARATOR} `)
+  return sections.join(`${BEGIN_COMMENT} ${MD_HUB_COMMENT_PREFIX}${PARAM_SEPARATOR} `)
 }
