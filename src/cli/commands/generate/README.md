@@ -30,7 +30,7 @@ output: README_MAIN.md # optional: README.md
 or
 ```markdown
 <!-- LINK_MD: ID: hoge -->
-# example
+# GENERATE COMMAND
 ```
 
 *set specific target md position*

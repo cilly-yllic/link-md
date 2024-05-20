@@ -43,7 +43,7 @@
     "build:clean": "npm run clean",
     "build:tsc": "npm run tsc",
     "build:generate": "npm run generate",
-    
+
     "//--- publish ---//": "",
     "publish:build": "run-s build:{clean,tsc,generate}"
   },
