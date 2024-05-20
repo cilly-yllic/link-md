@@ -1,9 +1,9 @@
-<!-- MD_HUB: ID: generate-command -->
-<!-- MD_HUB: LOCK: true -->
+<!-- MD_HOPPER: ID: generate-command -->
+<!-- MD_HOPPER: LOCK: true -->
 
 # GENERATE COMMAND
 
-- md-hub generate
+- md-hopper generate
 - lnmd generate
 
 ## Set Config in md File
@@ -11,7 +11,7 @@
 ### ROOT FILE
 
 ```markdown
-<!-- MD_HUB: CONFIG:
+<!-- MD_HOPPER: CONFIG:
 skip-hidden: true # optional: default true (ex: ignore .git, .idea, etc)
 include: src/**/*,libs/**/*.ts # optional: default empty (all files)
 exclude: dist/**/* # optional: default empty (only node_modules)
@@ -27,15 +27,15 @@ output: README_MAIN.md # optional: README.md
 _set file id and link name_
 
 ```markdown
-<!-- MD_HUB: ID: hoge -->
-<!-- MD_HUB: LOCK: true --> # not generate when it true, default false
-<!-- MD_HUB: TITLE: GENERATE COMMAND -->
+<!-- MD_HOPPER: ID: hoge -->
+<!-- MD_HOPPER: LOCK: true --> # not generate when it true, default false
+<!-- MD_HOPPER: TITLE: GENERATE COMMAND -->
 ```
 
 or
 
 ```markdown
-<!-- MD_HUB: ID: hoge -->
+<!-- MD_HOPPER: ID: hoge -->
 
 # GENERATE COMMAND
 ```
@@ -43,7 +43,7 @@ or
 _set specific target md position_
 
 ```markdown
-<!-- MD_HUB: LINK_NEXT_LINE:
+<!-- MD_HOPPER: LINK_NEXT_LINE:
 id: hoge # required
 inline: false  # optional: default false
 -->
@@ -52,7 +52,7 @@ inline: false  # optional: default false
 _all / children / grandChild / parallel depth link list_
 
 ```markdown
-<!-- MD_HUB: BEGIN_LINKS:
+<!-- MD_HOPPER: BEGIN_LINKS:
 all: true # optional: default false
 linked: false # optional: default false
 child: true # optional: default false
@@ -60,7 +60,7 @@ grandChild: true # optional: default false
 parallel: true # optional: default false
 -->
 
-<!-- MD_HUB: END_LINKS: -->
+<!-- MD_HOPPER: END_LINKS: -->
 ```
 
 ## Command Options
@@ -74,6 +74,6 @@ parallel: true # optional: default false
   .option('-i, --input <filename>', 'target root filename, default: README.md')
 ```
 
-<!-- MD_HUB: BEGIN_DEFINE_LINKS: -->
+<!-- MD_HOPPER: BEGIN_DEFINE_LINKS: -->
 
-<!-- MD_HUB: END_DEFINE_LINKS: -->
+<!-- MD_HOPPER: END_DEFINE_LINKS: -->

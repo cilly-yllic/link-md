@@ -1,20 +1,20 @@
-<!-- MD_HUB: CONFIG: -->
+<!-- MD_HOPPER: CONFIG: -->
 
-# LINK MD
+# MD HOPPER
 
 This Package Link md files in same repository.
 
 # Commands
 
-<!-- MD_HUB: LINK_NEXT_LINE:
+<!-- MD_HOPPER: LINK_NEXT_LINE:
 id: generate-command
 inline: true
 -->
 
-[generate][md_hub:generate-command]
+[generate][md_hopper:generate-command]
 
-<!-- MD_HUB: BEGIN_DEFINE_LINKS: -->
+<!-- MD_HOPPER: BEGIN_DEFINE_LINKS: -->
 
-[md_hub:generate-command]: ./src/cli/commands/generate/README.md 'GENERATE COMMAND'
+[md_hopper:generate-command]: ./src/cli/commands/generate/README.md 'GENERATE COMMAND'
 
-<!-- MD_HUB: END_DEFINE_LINKS: -->
+<!-- MD_HOPPER: END_DEFINE_LINKS: -->

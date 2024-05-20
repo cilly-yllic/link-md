@@ -1,20 +1,21 @@
 {
-  "name": "md-hub",
+  "name": "md-hopper",
   "version": "1.0.0-alpha",
   "description": "",
   "type": "module",
   "bin": {
-    "md-hub": "./dist/cli/index.js",
-    "lnmd": "./dist/cli/index.js"
+    "md-hopper": "./dist/cli/index.js",
+    "mdhopper": "./dist/cli/index.js",
+    "mdhop": "./dist/cli/index.js"
   },
   "repository": {
     "type": "git",
-    "url": "git+https://github.com/cilly-yllic/md-hub.git"
+    "url": "git+https://github.com/cilly-yllic/md-hopper.git"
   },
   "bugs": {
-    "url": "https://github.com/cilly-yllic/md-hub/issues"
+    "url": "https://github.com/cilly-yllic/md-hopper/issues"
   },
-  "homepage": "https://github.com/cilly-yllic/md-hub#readme",
+  "homepage": "https://github.com/cilly-yllic/md-hopper#readme",
   "scripts": {
     "prepare": "husky",
     "jest": "jest",
