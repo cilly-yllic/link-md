@@ -26,10 +26,6 @@ export interface PathDepthClassify {
 
 export interface Detail extends PathInfo, PathDepthClassify {}
 
-// export interface DetailMap {
-//   [path: string]: Detail
-// }
-
 export interface LinkNextLineProperties {
   id: string
   inline: true
@@ -50,19 +46,16 @@ export const PARAM_SEPARATOR = ':'
 export const MD_HOPPER_COMMENT_PREFIX = 'MD_HOPPER'
 export const COMMENT_REG_EXP = new RegExp(`${BEGIN_COMMENT}\\s*.*?${END_COMMENT}`, 'gs')
 export const BRAKE_LINE_REG_EXP = new RegExp(/\r?\n/, 'g')
-export const LINK_REG_EXP = new RegExp('^\\s*.*\\[(.+)][(|\\[](.+)[)|\\]].*')
+export const LINK_REG_EXP = new RegExp('^(\\s*.*)\\[(.+)][(|\\[](.+)[)|\\]].*')
 export const MD_HOPPER_COMMENT_PREFIX_REG_EXP = new RegExp(
   `${BEGIN_COMMENT}\\s*${MD_HOPPER_COMMENT_PREFIX}${PARAM_SEPARATOR}\\s*`
 )
-// export const MD_HOPPER_PARAMS_REG_EXP = new RegExp(`^\\w+${PARAM_SEPARATOR}(.*?)${END_COMMENT}.*`, 's')
 export const MD_HOPPER_PARAMS_REG_EXP = new RegExp(
   `^[^${PARAM_SEPARATOR}]+${PARAM_SEPARATOR}(.*?)${END_COMMENT}.*`,
   's'
 )
-// export const MD_HOPPER_CONTENT_REG_EXP = new RegExp(`^\\w+${PARAM_SEPARATOR}.*${END_COMMENT}(.*)`, 's')
 export const MD_HOPPER_CONTENT_REG_EXP = new RegExp(
   `^[^${PARAM_SEPARATOR}]+${PARAM_SEPARATOR}.*${END_COMMENT}(.*)`,
   's'
 )
-// export const MD_HOPPER_PROPERTY_REG_EXP = new RegExp(`^(\\w+?)${PARAM_SEPARATOR}.*`, 's')
 export const MD_HOPPER_PROPERTY_REG_EXP = new RegExp(`^([^${PARAM_SEPARATOR}]+?)${PARAM_SEPARATOR}.*`, 's')

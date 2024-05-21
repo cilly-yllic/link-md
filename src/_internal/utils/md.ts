@@ -19,42 +19,33 @@ import {
   END_COMMENT,
 } from '~types/md.js'
 
+import { replaceLineToLink } from './md/line.js'
 import { getRelative } from './path.js'
 import { isBoolean } from './type-check.js'
 
-export const getParam = (text: string, key: string) => {
+export const getParam = (txt: string, key: string) => {
   const PREFIX = `${BEGIN_COMMENT}\\s*${MD_HOPPER_COMMENT_PREFIX}:\\s*${key}:`
   const reg = new RegExp(`${PREFIX}(.*?)${END_COMMENT}`, 's')
-  if (!reg.test(text)) {
+  if (!reg.test(txt)) {
     return ''
   }
-  return (reg.exec(text) as RegExpExecArray)[1]
+  return (reg.exec(txt) as RegExpExecArray)[1]
 }
 
-export const getParams = (text: string, key: string) => {
-  const PREFIX = `${BEGIN_COMMENT}\\s*${MD_HOPPER_COMMENT_PREFIX}:\\s*${key}:`
-  const reg = new RegExp(`${PREFIX}(.*?)${END_COMMENT}`, 'gs')
-  if (!reg.test(text)) {
-    return ''
-  }
+const getRemovedComment = (txt: string) => txt.replace(COMMENT_REG_EXP, '')
 
-  return text.match(reg) as RegExpMatchArray
-}
-
-const getRemovedCommentOut = (text: string) => text.replace(COMMENT_REG_EXP, '')
-
-const getFirstLine = (text: string) => {
-  const lines = text.split('\n').filter(line => line.trim().length)
+const getFirstLine = (txt: string) => {
+  const lines = txt.split('\n').filter(line => line.trim().length)
   return lines.length ? lines[0].trim() : ''
 }
 
-export const getTitle = (text: string) => {
-  const title = getParam(text, 'TITLE')
+export const getTitle = (txt: string) => {
+  const title = getParam(txt, 'TITLE')
   if (title) {
     return title
   }
-  const md = getRemovedCommentOut(text)
-  return getParam(text, 'TITLE') || md.replace(/\r?\n?#+(.*?)\r?\n.*/s, '$1').trim() || getFirstLine(md)
+  const md = getRemovedComment(txt)
+  return md.replace(/\r?\n?#+(.*?)\r?\n.*/s, '$1').trim() || getFirstLine(md)
 }
 
 type DefineLinkName = `${typeof LINK_NAME_PREFIX}${string}`
@@ -70,19 +61,16 @@ const getDefineLink = (id: string, url: string, title: string): DefineLink =>
 
 const replaceToLink = (txt: string, inline: boolean, detail: Detail) => {
   if (LINK_REG_EXP.test(txt)) {
-    const url = txt.replace(LINK_REG_EXP, '$2')
+    const url = txt.replace(LINK_REG_EXP, '$3')
     if (url === getLinkName(detail.id)) {
       return txt
     }
-    // TODO keep list block
-    return `[${txt.replace(LINK_REG_EXP, '$1')}][${getLinkName(detail.id)}]
-<!-- ${MD_HOPPER_COMMENT_PREFIX}${PARAM_SEPARATOR} ${PROPERTIES.BEFORE_GENERATE_LINK}${PARAM_SEPARATOR} -->
-<!-- ${txt} -->
+    return `${replaceLineToLink(txt.replace(LINK_REG_EXP, '$1$2'), getLinkName(detail.id))}
+<!-- ${MD_HOPPER_COMMENT_PREFIX}${PARAM_SEPARATOR} ${PROPERTIES.BEFORE_GENERATE_LINK} (${new Date().toLocaleString()})${PARAM_SEPARATOR} ${txt} -->
 `
   }
   if (inline) {
-    // TODO keep list block
-    return `[${txt}][${getLinkName(detail.id)}]`
+    return replaceLineToLink(txt, getLinkName(detail.id))
   } else {
     return `[${detail.title}][${getLinkName(detail.id)}]
 ${txt}

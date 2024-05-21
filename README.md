@@ -11,7 +11,7 @@ id: generate-command
 inline: true
 -->
 
-[generate][md_hopper:generate-command]
+- [generate][md_hopper:generate-command]
 
 <!-- MD_HOPPER: BEGIN_DEFINE_LINKS: -->
 
