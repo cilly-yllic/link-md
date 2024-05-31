@@ -9,7 +9,7 @@ export const warn = (...args: any[]) => {
 }
 
 export const info = (...args: any[]) => {
-  console.log(chalk.blue(...args))
+  console.log(chalk.hex('#77CFF5')(...args))
 }
 
 export const error = (...args: any[]) => {

@@ -15,6 +15,7 @@ import { parse, relative } from 'path'
 // }
 
 export const getExecDir = () => process.cwd()
+export const getParseDirPath = (path: string) => parse(path).dir
 
 // export const getFullPath = (...path: string[]) => join(getProjectRootPath(), ...path)
 

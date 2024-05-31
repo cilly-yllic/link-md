@@ -17,6 +17,7 @@ export const DEFAULT_SETTINGS: Settings = Object.freeze({
   include: [],
   filenames: [DEFAULT_MD_FILE_NAME],
   output: DEFAULT_MD_FILE_NAME,
+  input: '.',
   depth: 0,
 })
 

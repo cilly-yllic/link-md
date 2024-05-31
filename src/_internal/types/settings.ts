@@ -3,6 +3,7 @@ export interface Settings {
   include: string[]
   exclude: string[]
   filenames: string[]
+  input: string
   output: string
   depth: number
 }

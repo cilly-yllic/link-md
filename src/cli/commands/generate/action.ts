@@ -8,7 +8,7 @@ import { Settings } from '~types/settings.js'
 import { getAllFiles } from '~utils/fs.js'
 import { info, warn, success } from '~utils/log.js'
 import { getParam, getTitle, replace } from '~utils/md.js'
-import { getExecDir } from '~utils/path.js'
+import { getExecDir, getParseDirPath } from '~utils/path.js'
 import { getDir, getDepthType, DEPTH_TYPES } from '~utils/path.js'
 
 const replacePath = (str: string) => str.replace(/\/{2,}/, '/')
@@ -21,6 +21,7 @@ const mergeConfig = ({ options, settings }: ActionArg<BundleOptions>): Settings 
     exclude: splitComma(options.exclude, settings.exclude),
     include: splitComma(options.include, settings.include),
     filenames: splitComma(options.filenames, settings.filenames),
+    input: getParseDirPath(options.input || '.'),
     output: options.output || settings.output,
     depth: Number(options.depth) || settings.depth,
   }
@@ -90,17 +91,19 @@ export const action = async (args: ActionArg<BundleOptions>) => {
   info('exec dir path', execDir)
   const config = mergeConfig(args)
   info('settings', JSON.stringify(config, null, 2))
+  const targetDir = join(execDir, config.input)
+  info('target dir', targetDir)
   const skipHidden = config['skip-hidden'] ? ['**/.*/**/*', '**/.*'] : []
   const exclude = [
     '**/node_modules/.*/*',
     '**/node_modules/**/*',
     ...skipHidden,
-    ...config.exclude.map(path => replacePath(`${execDir}/${path}`)),
+    ...config.exclude.map(path => replacePath(join(targetDir, path))),
   ]
   info('exclude', JSON.stringify(exclude, null, 2))
-  const include = config.include.map(path => replacePath(`${execDir}/${path}`))
+  const include = config.include.map(path => replacePath(join(targetDir, path)))
   info('include', JSON.stringify(include, null, 2))
-  const paths = getAllFiles(execDir, {
+  const paths = getAllFiles(targetDir, {
     include,
     exclude,
     ...(config.depth >= 1 ? { depth: config.depth } : {}),
