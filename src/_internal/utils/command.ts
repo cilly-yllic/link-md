@@ -58,8 +58,11 @@ export class CommandClass<T extends DefaultOptions> {
     return this
   }
 
-  action(action: Action) {
+  action(command: string, action: Action) {
     this.program = this.program.action(async (...args: any[]) => {
+      if (['help'].includes(command)) {
+        return action(this.args, ...args)
+      }
       const options = args[0]
       await this.init(options, getSettings(options.input || ''))
       for (const before of this.befores) {

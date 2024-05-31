@@ -5,6 +5,8 @@ import { CommandClass } from '~utils/command.js'
 
 import { action } from './action.js'
 
+const BASE_COMMAND = 'generate'
+
 const setAliases = (commandClass: CommandClass<BundleOptions>) => {
   commandClass
     .description('This command is used to exec target file.')
@@ -15,12 +17,12 @@ const setAliases = (commandClass: CommandClass<BundleOptions>) => {
     .option('-o, --output <filename>', 'output filename. default: README.md (replace)')
     .option('-i, --input <filename>', 'target root filename, default: README.md')
     .option('-D, --depth <filename>', 'depth level more than 0')
-    .action(options => {
+    .action(BASE_COMMAND, options => {
       return action(options)
     })
 }
 
-const commands = ['generate', 'g']
+const commands = [BASE_COMMAND, 'g']
 
 export const init = (program: Program) => {
   for (const command of commands) {
