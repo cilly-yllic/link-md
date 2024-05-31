@@ -1,10 +1,12 @@
 export interface BundleOptions {
+  debug?: boolean
   skipHidden?: boolean
   include?: string
   exclude?: string
   filenames?: string
   output?: string
   input?: string
+  depth?: string
 }
 
 export interface HelpOptions {

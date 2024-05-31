@@ -2,28 +2,28 @@ import { platform } from 'node:process'
 
 import { ActionArg } from '~types/command.js'
 import { HelpOptions } from '~types/options.js'
-import { info } from '~utils/log.js'
+import { info, hop } from '~utils/log.js'
 import { get, ENVS } from '~utils/process.js'
 
 const ASCII_ART = `
  
- _       _   __   _   _   _             ___  ___   _____
-| |     | | |  \\ | | | | / /           /   |/   | |  _  \\
-| |     | | |   \\| | | |/ /           / /|   /| | | | | |
-| |     | | | |\\   | | |\\ \\          / / |__/ | | | | | |
-| |___  | | | | \\  | | | \\ \\        / /       | | | |_| |
-|_____| |_| |_|  \\_| |_|  \\_\\      /_/        |_| |_____/
+     ___  ___   _____        _   _   _____   _____   _____   _____   _____
+    /   |/   | |  _  \\      | | | | /  _  \\ |  _  \\ |  _  \\ | ____| |  _  \\
+   / /|   /| | | | | |      | |_| | | | | | | |_| | | |_| | | |__   | |_| |
+  / / |__/ | | | | | |      |  _  | | | | | |  ___/ |  ___/ |  __|  |  _  /
+ / /       | | | |_| |      | | | | | |_| | | |     | |     | |___  | | \\ \\
+/_/        |_| |_____/      |_| |_| \\_____/ |_|     |_|     |_____| |_|  \\_\\
 
 `
 
 const VERSIONS = `
-  Link MD: ${get(ENVS.PACKAGE_VERSION)}
+  MD Hopper: ${get(ENVS.PACKAGE_VERSION)}
   Node: ${process.versions.node}
   OS: ${platform} ${process.arch}
   `
 
 const show = () => {
-  info(ASCII_ART)
+  hop(ASCII_ART)
   info(VERSIONS)
 }
 

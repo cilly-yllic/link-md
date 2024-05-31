@@ -15,3 +15,7 @@ export const info = (...args: any[]) => {
 export const error = (...args: any[]) => {
   console.log(chalk.red(...args))
 }
+
+export const hop = (...args: any[]) => {
+  console.log(chalk.hex('#F577F5')(...args))
+}

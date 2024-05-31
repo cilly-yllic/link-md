@@ -14,6 +14,7 @@ const setAliases = (commandClass: CommandClass<BundleOptions>) => {
     .option('-f, --filenames <strings>', 'filenames, default: README.md only')
     .option('-o, --output <filename>', 'output filename. default: README.md (replace)')
     .option('-i, --input <filename>', 'target root filename, default: README.md')
+    .option('-D, --depth <filename>', 'depth level more than 0')
     .action(options => {
       return action(options)
     })

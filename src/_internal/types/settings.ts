@@ -4,6 +4,7 @@ export interface Settings {
   exclude: string[]
   filenames: string[]
   output: string
+  depth: number
 }
 
 export type RcSettings = Partial<Settings>

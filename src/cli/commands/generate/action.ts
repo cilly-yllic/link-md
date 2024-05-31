@@ -6,8 +6,9 @@ import { Detail, PathDepthClassify, PathInfo } from '~types/md.js'
 import { BundleOptions } from '~types/options.js'
 import { Settings } from '~types/settings.js'
 import { getAllFiles } from '~utils/fs.js'
+import { info, warn, success } from '~utils/log.js'
 import { getParam, getTitle, replace } from '~utils/md.js'
-import { getProjectRootPath } from '~utils/path.js'
+import { getExecDir } from '~utils/path.js'
 import { getDir, getDepthType, DEPTH_TYPES } from '~utils/path.js'
 
 const replacePath = (str: string) => str.replace(/\/{2,}/, '/')
@@ -21,6 +22,7 @@ const mergeConfig = ({ options, settings }: ActionArg<BundleOptions>): Settings 
     include: splitComma(options.include, settings.include),
     filenames: splitComma(options.filenames, settings.filenames),
     output: options.output || settings.output,
+    depth: Number(options.depth) || settings.depth,
   }
 }
 
@@ -74,20 +76,42 @@ const getPathDetails = (paths: string[], config: Settings) => {
 }
 
 export const action = async (args: ActionArg<BundleOptions>) => {
-  const rootPath = getProjectRootPath()
+  const isDebug = args.options.debug
+  if (isDebug) {
+    info('=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-')
+    info('=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=- DEBUG MODE =-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-')
+    info('=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-')
+  } else {
+    warn('=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-')
+    warn('=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=- PRODUCTION MODE =-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-')
+    warn('=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-')
+  }
+  const execDir = getExecDir()
+  info('exec dir path', execDir)
   const config = mergeConfig(args)
+  info('settings', JSON.stringify(config, null, 2))
   const skipHidden = config['skip-hidden'] ? ['**/.*/**/*', '**/.*'] : []
-
   const exclude = [
     '**/node_modules/.*/*',
     '**/node_modules/**/*',
     ...skipHidden,
-    ...config.exclude.map(path => replacePath(`${rootPath}/${path}`)),
+    ...config.exclude.map(path => replacePath(`${execDir}/${path}`)),
   ]
-  const include = config.include.map(path => replacePath(`${rootPath}/${path}`))
-  const paths = getAllFiles(rootPath, [], { include, exclude }).filter(path =>
-    config.filenames.some(filename => path.endsWith(`/${filename}`))
-  )
+  info('exclude', JSON.stringify(exclude, null, 2))
+  const include = config.include.map(path => replacePath(`${execDir}/${path}`))
+  info('include', JSON.stringify(include, null, 2))
+  const paths = getAllFiles(execDir, {
+    include,
+    exclude,
+    ...(config.depth >= 1 ? { depth: config.depth } : {}),
+  }).filter(path => config.filenames.some(filename => path.endsWith(`/${filename}`)))
+  info('target paths', JSON.stringify(paths, null, 2))
+  if (isDebug) {
+    info('=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-')
+    info('=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=- END OF DEBUG MODE =-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-')
+    info('=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-')
+    return
+  }
   const pathDetails = getPathDetails(paths, config)
   for (const pathDetail of pathDetails) {
     if (pathDetail.lock) {
@@ -96,6 +120,10 @@ export const action = async (args: ActionArg<BundleOptions>) => {
     const content = replace(pathDetail, pathDetails)
     const output = pathDetail.output || config.output
     const writePath = output ? join(pathDetail.dir, output) : pathDetail.path
+    success('write file: ', writePath)
     writeFileSync(writePath, content, 'utf-8')
   }
+  success('=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-')
+  success('=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=- END OF PRODUCTION MODE =-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-')
+  success('=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-')
 }

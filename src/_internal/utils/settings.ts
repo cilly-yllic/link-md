@@ -4,10 +4,11 @@ import { Settings } from '~types/settings.js'
 import { getParam } from '~utils/md.js'
 
 import { SETTING_FILE_NAME } from './configs.js'
-import { getProjectRootPath } from './path.js'
+import { getExecDir } from './path.js'
 
-const Booleans = ['skip-hidden']
-const Strings = ['exclude', 'include', 'filenames']
+const BOOLEANS = ['skip-hidden']
+const STRINGS = ['exclude', 'include', 'filenames']
+const NUMBERS = ['depth']
 
 export const DEFAULT_MD_FILE_NAME = 'README.md'
 export const DEFAULT_SETTINGS: Settings = Object.freeze({
@@ -16,6 +17,7 @@ export const DEFAULT_SETTINGS: Settings = Object.freeze({
   include: [],
   filenames: [DEFAULT_MD_FILE_NAME],
   output: DEFAULT_MD_FILE_NAME,
+  depth: 0,
 })
 
 export const parse = (txt: string): Settings => {
@@ -29,10 +31,12 @@ export const parse = (txt: string): Settings => {
     const key = keyValue[0].trim() as keyof Settings
     const value: Settings[typeof key] | string = keyValue[1].trim()
     let val: Settings[typeof key]
-    if (Booleans.includes(key)) {
+    if (BOOLEANS.includes(key)) {
       val = JSON.parse(`${value}`) as Settings[typeof key]
-    } else if (Strings.includes(key)) {
+    } else if (STRINGS.includes(key)) {
       val = value.split(',')
+    } else if (NUMBERS.includes(key)) {
+      val = Number(value)
     } else {
       continue
     }
@@ -46,6 +50,6 @@ export const parse = (txt: string): Settings => {
 }
 
 export const getSettings = (inputFilename: string) => {
-  const readme = readFileSync(`${getProjectRootPath()}/${inputFilename || SETTING_FILE_NAME}`, 'utf-8')
+  const readme = readFileSync(`${getExecDir()}/${inputFilename || SETTING_FILE_NAME}`, 'utf-8')
   return parse(getParam(readme, 'CONFIG'))
 }

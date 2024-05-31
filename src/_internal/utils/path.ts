@@ -1,23 +1,22 @@
-import { existsSync } from 'fs'
-import { join, parse, relative } from 'path'
+import { parse, relative } from 'path'
 
-import { SETTING_FILE_NAME } from './configs.js'
+// export const getProjectRootPath = () => {
+//   let path = process.cwd()
+//   if (!existsSync(join(path, SETTING_FILE_NAME))) {
+//     for (const _ in process.cwd().split(/\//g)) {
+//       path = join(path, '..')
+//       if (existsSync(join(path, SETTING_FILE_NAME))) {
+//         break
+//       }
+//     }
+//   }
+//
+//   return path
+// }
 
-export const getProjectRootPath = () => {
-  let path = process.cwd()
-  if (!existsSync(join(path, SETTING_FILE_NAME))) {
-    for (const _ in process.cwd().split(/\//g)) {
-      path = join(path, '..')
-      if (existsSync(join(path, SETTING_FILE_NAME))) {
-        break
-      }
-    }
-  }
+export const getExecDir = () => process.cwd()
 
-  return path
-}
-
-export const getFullPath = (...path: string[]) => join(getProjectRootPath(), ...path)
+// export const getFullPath = (...path: string[]) => join(getProjectRootPath(), ...path)
 
 export const getDir = (path: string) => {
   return parse(path).dir
