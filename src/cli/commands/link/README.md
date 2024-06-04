@@ -1,11 +1,11 @@
-<!-- MD_HOPPER: ID: generate-command -->
+<!-- MD_HOPPER: ID: link-command -->
 <!-- MD_HOPPER: LOCK: true -->
 
-# GENERATE COMMAND
+# LINK COMMAND
 
-- md-hopper generate
-- mdhopper generate
-- mdhop generate
+- md-hopper link # short l
+- mdhopper link # short l
+- mdhop link # short l
 
 ## Set Config in md File
 
@@ -17,8 +17,9 @@ skip-hidden: true # optional: default true (ex: ignore .git, .idea, etc)
 include: src/**/*,libs/**/*.ts # optional: default empty (all files)
 exclude: dist/**/* # optional: default empty (only node_modules)
 filenames: README.md,CHANGE_LOG.md # optional: default README.md
-output: README_MAIN.md # optional: README.md
 -->
+
+<!-- MD_HOPPER: OUTPUT: README.md --> # optional (default: README.md) ex: README_MAIN.md
 ```
 
 ### OTHERS
@@ -30,7 +31,7 @@ _set file id and link name_
 ```markdown
 <!-- MD_HOPPER: ID: hoge -->
 <!-- MD_HOPPER: LOCK: true --> # not generate when it true, default false
-<!-- MD_HOPPER: TITLE: GENERATE COMMAND -->
+<!-- MD_HOPPER: TITLE: LINK COMMAND -->
 ```
 
 or

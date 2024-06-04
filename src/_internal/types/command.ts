@@ -1,6 +1,3 @@
-import { Options, DefaultOptions } from './options.js'
-import { Settings } from './settings.js'
-
 // eslint-disable-next-line @typescript-eslint/no-explicit-any
 export type Action = (...args: any[]) => any
 
@@ -10,7 +7,7 @@ export interface BeforeFunction {
   args: any[]
 }
 
-export interface ActionArg<T extends DefaultOptions> {
-  options: Options<T>
-  settings: Settings
+export interface ActionArg<CommandOptions extends Record<string, any>, MdSettings extends Record<string, any>> {
+  options: CommandOptions
+  settings: MdSettings
 }

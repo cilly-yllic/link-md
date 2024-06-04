@@ -8,13 +8,16 @@ export const PROPERTIES = {
   BEFORE_GENERATE_LINK: 'BEFORE_GENERATE_LINK',
 }
 
-export interface PathInfo {
+export interface MdAttributes {
   id: string
   lock: boolean
   title: string
+  output: string
+}
+
+export interface PathInfo extends MdAttributes {
   path: string
   dir: string
-  output: string
   outputPath: string
 }
 
@@ -59,3 +62,8 @@ export const MD_HOPPER_CONTENT_REG_EXP = new RegExp(
   's'
 )
 export const MD_HOPPER_PROPERTY_REG_EXP = new RegExp(`^([^${PARAM_SEPARATOR}]+?)${PARAM_SEPARATOR}.*`, 's')
+export const getParamExp = (param: string) =>
+  new RegExp(
+    `${BEGIN_COMMENT}\\s*${MD_HOPPER_COMMENT_PREFIX}\\s*${PARAM_SEPARATOR}\\s*${param}\\s*${PARAM_SEPARATOR}.*?${END_COMMENT}\\n*`,
+    'gs'
+  )

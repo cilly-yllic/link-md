@@ -1,7 +1,7 @@
 import { platform } from 'node:process'
 
 import { ActionArg } from '~types/command.js'
-import { HelpOptions } from '~types/options.js'
+import { CommandOptions, MdSettings } from '~types/configs/help.js'
 import { info, hop } from '~utils/log.js'
 import { get, ENVS } from '~utils/process.js'
 
@@ -27,7 +27,7 @@ const show = () => {
   info(VERSIONS)
 }
 
-export const action = async (_: ActionArg<HelpOptions>) => {
+export const action = async (_: ActionArg<CommandOptions, MdSettings>) => {
   show()
   // TODO
   return

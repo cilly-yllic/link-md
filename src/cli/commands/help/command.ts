@@ -1,22 +1,17 @@
-import { Command as Program } from 'commander'
-
-import { HelpOptions } from '~types/options.js'
+import { CommandOptions, MdSettings } from '~types/configs/help.js'
 import { CommandClass } from '~utils/command.js'
+import { getCommands } from '~utils/path.js'
 
 import { action } from './action.js'
 
-const BASE_COMMAND = 'help'
+export const COMMANDS = getCommands(import.meta.dirname)
 
-const setAliases = (commandClass: CommandClass<HelpOptions>) => {
-  commandClass.description('This command is used to show help').action(BASE_COMMAND, options => {
+export const init = (commandClass: CommandClass<CommandOptions, MdSettings>) => {
+  commandClass.description('This command is used to show help').action(options => {
     return action(options)
   })
 }
 
-const commands = [BASE_COMMAND, 'h']
-
-export const init = (program: Program) => {
-  for (const command of commands) {
-    setAliases(new CommandClass<HelpOptions>(program).command(command))
-  }
+export const getSettings = (options: CommandOptions) => {
+  return options
 }

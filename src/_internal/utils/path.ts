@@ -2,10 +2,10 @@ import { parse, relative } from 'path'
 
 // export const getProjectRootPath = () => {
 //   let path = process.cwd()
-//   if (!existsSync(join(path, SETTING_FILE_NAME))) {
+//   if (!existsSync(join(path, SETTING_FILENAME))) {
 //     for (const _ in process.cwd().split(/\//g)) {
 //       path = join(path, '..')
-//       if (existsSync(join(path, SETTING_FILE_NAME))) {
+//       if (existsSync(join(path, SETTING_FILENAME))) {
 //         break
 //       }
 //     }
@@ -14,14 +14,19 @@ import { parse, relative } from 'path'
 //   return path
 // }
 
+export const isDirectory = (path: string) => !parse(path).ext
 export const getExecDir = () => process.cwd()
 export const getParseDirPath = (path: string) => parse(path).dir
+export const getParentDirname = (path: string) => path.split('/').pop()
+export const getCommands = (path: string, start = 0, end = 1) => {
+  const dirname = getParentDirname(path)
+  if (!dirname) {
+    throw new Error('no command name')
+  }
+  return [dirname, dirname.substring(start, end)]
+}
 
 // export const getFullPath = (...path: string[]) => join(getProjectRootPath(), ...path)
-
-export const getDir = (path: string) => {
-  return parse(path).dir
-}
 
 export const DEPTH_TYPES = {
   ancestor: 'ancestor',

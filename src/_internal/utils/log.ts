@@ -1,21 +1,21 @@
-import chalk from 'chalk'
+import * as chalk from './chalk.js'
 
 export const success = (...args: any[]) => {
-  console.log(chalk.green(...args))
+  console.log(chalk.success(...args))
 }
 
 export const warn = (...args: any[]) => {
-  console.log(chalk.hex('#FFA500')(...args))
+  console.log(chalk.warn(...args))
 }
 
 export const info = (...args: any[]) => {
-  console.log(chalk.hex('#77CFF5')(...args))
+  console.log(chalk.info(...args))
 }
 
 export const error = (...args: any[]) => {
-  console.log(chalk.red(...args))
+  console.log(chalk.error(...args))
 }
 
 export const hop = (...args: any[]) => {
-  console.log(chalk.hex('#F577F5')(...args))
+  console.log(chalk.hop(...args))
 }

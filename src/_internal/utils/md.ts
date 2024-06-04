@@ -1,6 +1,7 @@
 import { readFileSync } from 'fs'
 
 import {
+  MdAttributes,
   Detail,
   LinkNextLineProperties,
   EndLinksProperties,
@@ -17,6 +18,7 @@ import {
   MD_HOPPER_CONTENT_REG_EXP,
   BEGIN_COMMENT,
   END_COMMENT,
+  getParamExp,
 } from '~types/md.js'
 
 import { replaceLineToLink } from './md/line.js'
@@ -32,6 +34,21 @@ export const getParam = (txt: string, key: string) => {
   return (reg.exec(txt) as RegExpExecArray)[1]
 }
 
+export const getParamComment = (param: string, value: string) =>
+  `${BEGIN_COMMENT} ${MD_HOPPER_COMMENT_PREFIX}${PARAM_SEPARATOR} ${param}${PARAM_SEPARATOR} ${value} ${END_COMMENT}`
+export const getKeyValues = (keyValues: Record<string, string | number | boolean>) => {
+  const arr = Object.entries(keyValues)
+  const txt = arr.map(([key, value]) => `${key}${PARAM_SEPARATOR} ${value}`).join('\n')
+  const prefixSuffix = arr.length >= 2 ? '\n' : ''
+  return `${prefixSuffix}${txt}${prefixSuffix}`
+}
+type CommentParams = Record<string, string | number | boolean>
+export const getParamsComment = <T extends CommentParams = CommentParams>(keyValues: T) =>
+  `${BEGIN_COMMENT} ${MD_HOPPER_COMMENT_PREFIX}${PARAM_SEPARATOR} ${getKeyValues(keyValues)} ${END_COMMENT}`
+export const removeParam = (md: string, param: string) => {
+  return md.replace(getParamExp(param), '')
+}
+
 const getRemovedComment = (txt: string) => txt.replace(COMMENT_REG_EXP, '')
 
 const getFirstLine = (txt: string) => {
@@ -45,7 +62,9 @@ export const getTitle = (txt: string) => {
     return title
   }
   const md = getRemovedComment(txt)
-  return md.replace(/\r?\n?#+(.*?)\r?\n.*/s, '$1').trim() || getFirstLine(md)
+  const lines = md.split('\n').filter(line => /^#+\s*./.test(line))
+  const str = lines.length >= 1 ? lines[0].trim().replace(/^\s*#+\s*(.+)$/, '$1') : getFirstLine(md)
+  return str.replace(/[[\]():]/g, '')
 }
 
 type DefineLinkName = `${typeof LINK_NAME_PREFIX}${string}`
@@ -287,4 +306,17 @@ export const replace = (detail: Detail, details: Detail[]) => {
     )
   }
   return sections.join(`${BEGIN_COMMENT} ${MD_HOPPER_COMMENT_PREFIX}${PARAM_SEPARATOR} `)
+}
+
+export const getLinkedMdDetail = (md: string): MdAttributes => {
+  const id = getParam(md, 'ID').trim()
+  const LOCK = getParam(md, 'LOCK').trim()
+  const lock = LOCK ? JSON.parse(LOCK) : false
+  const output = getParam(md, 'OUTPUT').trim()
+  return {
+    id,
+    lock,
+    title: (getTitle(md) || id).trim(),
+    output,
+  }
 }

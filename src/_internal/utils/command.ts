@@ -1,21 +1,24 @@
 import { Command as Program } from 'commander'
 
 import { Action, BeforeFunction, ActionArg } from '~types/command.js'
-import { DefaultOptions } from '~types/options.js'
-import { Settings } from '~types/settings.js'
 
-import { getSettings } from './settings.js'
+type SettingsFnc<CommandOptions extends Record<string, any>, MdSettings extends Record<string, any>> = (
+  options: CommandOptions
+) => MdSettings
 
-export class CommandClass<T extends DefaultOptions> {
+export class CommandClass<CommandOptions extends Record<string, any>, MdSettings extends Record<string, any>> {
   program!: Program
   private befores: BeforeFunction[] = []
-  private args!: ActionArg<T>
+  private args!: ActionArg<CommandOptions, MdSettings>
+  private getSettingFnc: SettingsFnc<CommandOptions, MdSettings>
 
-  constructor(program: Program) {
+  constructor(program: Program, getSettingFnc: SettingsFnc<CommandOptions, MdSettings>) {
     this.program = program
+    this.getSettingFnc = getSettingFnc
   }
 
-  async init(options: ActionArg<T>['options'], settings: Settings) {
+  // async init(options: ActionArg<T>['options'], settings: Settings) {
+  async init(options: CommandOptions, settings: MdSettings) {
     this.args = {
       options,
       settings,
@@ -28,7 +31,7 @@ export class CommandClass<T extends DefaultOptions> {
     return this
   }
 
-  help(helpTxt: string): CommandClass<T> {
+  help(helpTxt: string) {
     this.program = this.program.on('--help', () => {
       console.log()
       console.log(helpTxt)
@@ -36,39 +39,50 @@ export class CommandClass<T extends DefaultOptions> {
     return this
   }
 
-  before(before: Action, ...args: any[]): CommandClass<T> {
+  before(before: Action, ...args: any[]) {
     this.befores.push({ fn: before, args: args })
     return this
   }
 
-  description(description: string): CommandClass<T> {
+  description(description: string) {
     this.program = this.program.description(description)
     return this
   }
 
-  option(...args: any[]): CommandClass<T> {
+  option(...args: any[]) {
     const flags = args.shift()
     this.program = this.program.option(flags, ...args)
     return this
   }
 
-  requiredOption(...args: any[]): CommandClass<T> {
+  requiredOption(...args: any[]) {
     const flags = args.shift()
     this.program = this.program.requiredOption(flags, ...args)
     return this
   }
 
-  action(command: string, action: Action) {
+  action(action: Action) {
     this.program = this.program.action(async (...args: any[]) => {
-      if (['help'].includes(command)) {
-        return action(this.args, ...args)
-      }
-      const options = args[0]
-      await this.init(options, getSettings(options.input || ''))
+      // if (['help'].includes(command)) {
+      //   return action(this.args, ...args)
+      // }
+      const options = args[0] as CommandOptions
+      await this.init(options, this.getSettingFnc(options))
       for (const before of this.befores) {
         await before.fn(options, ...before.args)
       }
       return action(this.args, ...args)
     })
+  }
+}
+
+export const setCommands = <CommandOptions extends Record<string, any>, MdSettings extends Record<string, any>>(
+  program: Program,
+  commands: string[],
+  initFnc: (commandClass: CommandClass<CommandOptions, MdSettings>) => void,
+  getSettingFnc: SettingsFnc<CommandOptions, MdSettings>
+) => {
+  for (const command of commands) {
+    initFnc(new CommandClass<CommandOptions, MdSettings>(program, getSettingFnc).command(command))
   }
 }
