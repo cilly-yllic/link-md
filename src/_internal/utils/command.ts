@@ -18,7 +18,7 @@ export class CommandClass<CommandOptions extends Record<string, any>, MdSettings
   }
 
   // async init(options: ActionArg<T>['options'], settings: Settings) {
-  async init(options: CommandOptions, settings: MdSettings) {
+  init(options: CommandOptions, settings: MdSettings) {
     this.args = {
       options,
       settings,
@@ -63,9 +63,6 @@ export class CommandClass<CommandOptions extends Record<string, any>, MdSettings
 
   action(action: Action) {
     this.program = this.program.action(async (...args: any[]) => {
-      // if (['help'].includes(command)) {
-      //   return action(this.args, ...args)
-      // }
       const options = args[0] as CommandOptions
       await this.init(options, this.getSettingFnc(options))
       for (const before of this.befores) {

@@ -1,6 +1,12 @@
+import { readdirSync } from 'fs'
+import { join } from 'path'
+
 import { Command as Program } from 'commander'
 
 import { setCommands } from '~utils/command.js'
+import { isDirectory } from '~utils/fs.js'
+
+const __dirname = import.meta.dirname
 
 const initCommand = async (filename: string, program: Program) => {
   const { COMMANDS, init, getSettings } = await import(`./${filename}/command.js`)
@@ -8,7 +14,11 @@ const initCommand = async (filename: string, program: Program) => {
   setCommands(program, COMMANDS, init, getSettings)
 }
 export const init = async (program: Program) => {
-  await initCommand('generate', program)
-  await initCommand('help', program)
-  await initCommand('link', program)
+  const list = readdirSync(join(__dirname))
+  for (const dir of list) {
+    if (!isDirectory(join(__dirname, dir))) {
+      continue
+    }
+    await initCommand(dir, program)
+  }
 }
