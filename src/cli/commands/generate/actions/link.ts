@@ -2,7 +2,7 @@ import { readFileSync, existsSync, writeFileSync } from 'fs'
 import { parse, join } from 'path'
 
 import inquirer from 'inquirer'
-import tablePlugin from 'inquirer-table-input'
+import { TablePlugin, TableQuestion } from 'inquirer-plugins/table'
 import { v4 as uuid } from 'uuid'
 
 import { MdSettings, GENERATE_TYPES } from '~types/configs/generate.js'
@@ -20,32 +20,31 @@ interface QuestionParam extends MdAttributes {
 }
 
 const getAnswers = (details: QuestionParam[]) => {
-  inquirer.registerPrompt('table-input', tablePlugin)
-  return inquirer.prompt([
-    {
-      type: 'table-input',
-      name: 'links',
-      message: 'GENERATE LINKS PATH SETTINGS',
-      infoMessage: `Edit setting.`,
-      hideInfoWhenKeyPressed: false,
-      freezeColumns: 1,
-      decimalPoint: '.',
-      decimalPlaces: 2,
-      selectedColor: warn,
-      editableColor: success,
-      editingColor: hop,
-      columns: [
-        { name: cyan.bold('filepath'), value: 'path' },
-        { name: cyan.bold('id'), value: 'id', editable: 'text' },
-        { name: cyan.bold('title'), value: 'title', editable: 'text' },
-        { name: cyan.bold('output'), value: 'output', editable: 'text' },
-        { name: cyan.bold('lock'), value: 'lock', editable: 'text' },
-      ],
-      rows: details.map(({ path, id, title, output, lock }) => {
-        return [bold(path), id, title, output, lock]
-      }),
-      validate: () => false,
+  inquirer.registerPrompt('table', TablePlugin)
+  const question: TableQuestion = {
+    type: 'table',
+    name: 'links',
+    message: 'GENERATE LINKS PATH SETTINGS',
+    description: `Edit setting.`,
+    disableColumnIndexes: [0],
+    colors: {
+      selected: warn,
+      editable: success,
+      editing: hop,
     },
+    columns: [
+      { name: cyan.bold('filepath'), value: 'path', type: 'input' },
+      { name: cyan.bold('id'), value: 'id', type: 'input' },
+      { name: cyan.bold('title'), value: 'title', type: 'input' },
+      { name: cyan.bold('output'), value: 'output', type: 'input' },
+      { name: cyan.bold('lock'), value: 'lock', type: 'confirm' },
+    ],
+    rows: details.map(({ path, id, title, output, lock }) => {
+      return [bold(path), id, title, output, lock]
+    }),
+  }
+  return inquirer.prompt([
+    question,
   ])
 }
 
@@ -66,9 +65,8 @@ const writeMd = (md: string, values: Record<(typeof PARAMS)[number] | 'path', st
   for (const params of PARAMS) {
     const PARAM = params.toUpperCase()
     md = removeParam(md, PARAM)
-    const value = getValue(params, values[params])
+    const value = values[params]
     if (value) {
-      // comments.push(getParamComment(PARAM, `${value}`))
       comments.push(getParamsComment({ [PARAM]: `${value}` }))
     }
   }
@@ -112,15 +110,6 @@ const getGenerateId = (id: string, settings: MdSettings, path: string, prefixExp
   }
 }
 
-const getValue = (key: (typeof PARAMS)[number], value: string) => {
-  switch (key) {
-    case 'lock':
-      return value === 'true'
-    default:
-      return value
-  }
-}
-
 const generateLinks = async (settings: MdSettings, fullPath: string) => {
   const { depth } = settings
   const execDir = getExecDir()
@@ -135,6 +124,7 @@ const generateLinks = async (settings: MdSettings, fullPath: string) => {
     questions.push(getQuestionParam(settings, path, md, prefixExp))
   }
   const { links } = await getAnswers(questions)
+  console.log(links)
   for (const result of links.result) {
     writeMd(readFileSync(result.path, 'utf-8'), result)
   }
