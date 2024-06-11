@@ -43,9 +43,7 @@ const getAnswers = (details: QuestionParam[]) => {
       return [bold(path), id, title, output, lock]
     }),
   }
-  return inquirer.prompt([
-    question,
-  ])
+  return inquirer.prompt([question])
 }
 
 const getQuestionParam = (settings: MdSettings, path: string, md: string, prefixExp: RegExp) => {
